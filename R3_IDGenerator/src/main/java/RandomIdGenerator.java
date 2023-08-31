@@ -1,3 +1,4 @@
+import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -6,6 +7,8 @@ import java.net.UnknownHostException;
 import java.util.Random;
 
 public class RandomIdGenerator implements LogTraceIdGenerator {
+    //不读取数据 | 不参与业务逻辑的执行 | 不影响代码逻辑的正确性
+    //不需要进行单元测试，也不必进行依赖注入
     private static final Logger logger = LoggerFactory.getLogger(RandomIdGenerator.class);
 
     @Override
@@ -16,7 +19,8 @@ public class RandomIdGenerator implements LogTraceIdGenerator {
         return String.format("%s-%d-%s", substrOfHostName, currentTimeMillis, radomString);
     }
 
-    private String generateRadomAlphameric(int length) {
+    @VisibleForTesting
+    protected String generateRadomAlphameric(int length) {
         char[] randomChars = new char[length];
         int count = 0;
         //用解释性变量替代魔数
@@ -40,12 +44,21 @@ public class RandomIdGenerator implements LogTraceIdGenerator {
         String substrOfHostName;
         try {
             String hostName = InetAddress.getLocalHost().getHostName();
-            String[] tokens = hostName.split("\\.");
-            substrOfHostName = tokens[tokens.length - 1];
+            substrOfHostName = getLastSubstrSplittedByDot(hostName);
             return substrOfHostName;
         } catch (UnknownHostException e) {
             logger.warn("Failed to get the host name.", e);
         }
         return null;
+    }
+
+    /**
+     * 将getLastfieldOfHostName的主要代码抽取出来后
+     * 以下的方法不依赖本地的主机名，可单独进行单元测试
+     */
+    @VisibleForTesting
+    protected String getLastSubstrSplittedByDot(String hostName) {
+        String[] tokens = hostName.split("\\.");
+        return tokens[tokens.length - 1];
     }
 }
