@@ -15,12 +15,12 @@ public class RandomIdGenerator implements LogTraceIdGenerator {
     public String generate() {
         String substrOfHostName = getLastfieldOfHostName();
         long currentTimeMillis = System.currentTimeMillis();
-        String radomString = generateRadomAlphameric(8);
+        String radomString = generateRandomAlphameric(8);
         return String.format("%s-%d-%s", substrOfHostName, currentTimeMillis, radomString);
     }
 
     @VisibleForTesting
-    protected String generateRadomAlphameric(int length) {
+    protected String generateRandomAlphameric(int length) {
         char[] randomChars = new char[length];
         int count = 0;
         //用解释性变量替代魔数
