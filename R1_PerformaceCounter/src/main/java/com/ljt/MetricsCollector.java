@@ -9,6 +9,10 @@ import com.ljt.inner.MetricsStorage;
 public class MetricsCollector {
     private final MetricsStorage metricsStorage;
 
+    public MetricsCollector() {
+        this(new RedisMetricsStorage());
+    }
+
     public MetricsCollector(MetricsStorage metricsStorage) {
         this.metricsStorage = metricsStorage;
     }

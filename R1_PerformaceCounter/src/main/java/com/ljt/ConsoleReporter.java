@@ -14,13 +14,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * 将统计信息打印到控制台
  */
-public class ConsoleReporter {
+public class ConsoleReporter extends ScheduledReporter {
     private MetricsStorage metricsStorage;
     private Aggregator aggregator;
     private StatViewer viewer;
     private ScheduledExecutorService executor;
 
     public ConsoleReporter(MetricsStorage metricsStorage, Aggregator aggregator, StatViewer viewer) {
+        super(metricsStorage,aggregator,viewer);
         this.metricsStorage = metricsStorage;
         this.aggregator = aggregator;
         this.viewer = viewer;
@@ -36,11 +37,7 @@ public class ConsoleReporter {
                 long durationInMillis = durationInSeconds * 1000;
                 long endTimeInMillis = System.currentTimeMillis();
                 long startTimeInMillis = endTimeInMillis - durationInMillis;
-                Map<String, List<RequestInfo>> requestInfos = metricsStorage.getRequestInfos(startTimeInMillis, endTimeInMillis);
-                // 第2个代码逻辑：根据原始数据，计算得到统计数据；
-                Map<String, RequestStat> requestStats = aggregator.aggtregator(requestInfos, durationInMillis);
-                // 第3个代码逻辑：将统计数据显示到终端（命令行或邮件）；
-                viewer.output(requestStats, startTimeInMillis, endTimeInMillis);
+                doStatAndReport(startTimeInMillis, endTimeInMillis);
             }
         }, 0, periodInSeconds, TimeUnit.SECONDS);
     }
