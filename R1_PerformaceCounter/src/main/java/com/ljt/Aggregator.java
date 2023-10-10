@@ -1,11 +1,25 @@
 package com.ljt;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 根据原始数据计算统计数据
  */
 public class Aggregator {
+
+    public Map<String, RequestStat> aggtregator(Map<String, List<RequestInfo>> requestInfos, long durationInMillis) {
+        Map<String, RequestStat> requestStats = new HashMap<>();
+        for (Map.Entry<String, List<RequestInfo>> entry : requestInfos.entrySet()) {
+            String apiName = entry.getKey();
+            List<RequestInfo> requestInfosPerApi = entry.getValue();
+            RequestStat requestStat = doAggregate(requestInfosPerApi, durationInMillis);
+            requestStats.put(apiName, requestStat);
+        }
+        return requestStats;
+    }
+
     /**
      * 统计requestInfos的最大值，最小值，响应次数等
      *
@@ -13,7 +27,7 @@ public class Aggregator {
      * @param durationInSeconds 在durationInSeconds时间段内得到requestInfos数据
      * @return RequestStat 统计结果
      */
-    public static RequestStat aggregate(List<RequestInfo> requestInfos, long durationInSeconds) {
+    public static RequestStat doAggregate(List<RequestInfo> requestInfos, long durationInSeconds) {
         double maxRespTime = Double.MAX_VALUE;
         double minRespTime = Double.MIN_VALUE;
         double avgRespTime = -1;

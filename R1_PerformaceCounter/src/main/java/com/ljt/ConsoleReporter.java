@@ -2,6 +2,7 @@ package com.ljt;
 
 import com.google.gson.Gson;
 import com.ljt.inner.MetricsStorage;
+import com.ljt.inner.StatViewer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,11 +15,15 @@ import java.util.concurrent.TimeUnit;
  * 将统计信息打印到控制台
  */
 public class ConsoleReporter {
-    private final MetricsStorage metricsStorage;
-    private final ScheduledExecutorService executor;
+    private MetricsStorage metricsStorage;
+    private Aggregator aggregator;
+    private StatViewer viewer;
+    private ScheduledExecutorService executor;
 
-    public ConsoleReporter(MetricsStorage metricsStorage) {
+    public ConsoleReporter(MetricsStorage metricsStorage, Aggregator aggregator, StatViewer viewer) {
         this.metricsStorage = metricsStorage;
+        this.aggregator = aggregator;
+        this.viewer = viewer;
         this.executor = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -32,18 +37,10 @@ public class ConsoleReporter {
                 long endTimeInMillis = System.currentTimeMillis();
                 long startTimeInMillis = endTimeInMillis - durationInMillis;
                 Map<String, List<RequestInfo>> requestInfos = metricsStorage.getRequestInfos(startTimeInMillis, endTimeInMillis);
-                Map<String, RequestStat> stats = new HashMap<>();
-                for (Map.Entry<String, List<RequestInfo>> entry : requestInfos.entrySet()) {
-                    String key = entry.getKey();
-                    List<RequestInfo> requestInfosPerApi = entry.getValue();
-                    // 第2个代码逻辑：根据原始数据，计算得到统计数据；
-                    RequestStat requestStat = Aggregator.aggregate(requestInfosPerApi, durationInMillis);
-                    stats.put(key, requestStat);
-                }
+                // 第2个代码逻辑：根据原始数据，计算得到统计数据；
+                Map<String, RequestStat> requestStats = aggregator.aggtregator(requestInfos, durationInMillis);
                 // 第3个代码逻辑：将统计数据显示到终端（命令行或邮件）；
-                System.out.println("Time Span: [" + startTimeInMillis + ", " + endTimeInMillis + "]");
-                Gson gson = new Gson();
-                System.out.println(gson.toJson(stats));
+                viewer.output(requestStats, startTimeInMillis, endTimeInMillis);
             }
         }, 0, periodInSeconds, TimeUnit.SECONDS);
     }
