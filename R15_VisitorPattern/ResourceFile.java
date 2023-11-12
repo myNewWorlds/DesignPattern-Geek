@@ -7,4 +7,6 @@ public abstract class ResourceFile {
     public ResourceFile(String filepath) {
         this.filepath = filepath;
     }
+
+    abstract public void accept(Extractor extractor);
 }

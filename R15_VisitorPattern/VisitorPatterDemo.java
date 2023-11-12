@@ -7,11 +7,9 @@ public class VisitorPatterDemo {
         Extractor extractor = new Extractor();
         List<ResourceFile> resourceFiles = listAllResourceFiles("directory");
         for (ResourceFile resourceFile : resourceFiles) {
-            //resourceFile是多态实现，extract2txt是函数的重载
-            //多态是动态绑定，运行时获取对象的实际类型
-            //函数重载是静态绑定，编译时根据参数的声明类型执行对应的方法，不能获取对象的实际类型
-            //所以下面执行报错
-            extractor.extract2txt(resourceFile);
+            //表面看是resourceFile调用extractor
+            //其实内部将resourceFile作为参数，extractor回调自己的方法
+            resourceFile.accept(extractor);
         }
     }
 
