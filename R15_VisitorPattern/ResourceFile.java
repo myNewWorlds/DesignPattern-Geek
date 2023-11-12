@@ -8,5 +8,5 @@ public abstract class ResourceFile {
         this.filepath = filepath;
     }
 
-    abstract public void accept(Extractor extractor);
+    abstract public void accept(Visitor visitor);
 }
