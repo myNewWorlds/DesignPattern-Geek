@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///test_mybatisplus
+    username: root
+    password: 1234
+    type: com.alibaba.druid.pool.DruidDataSource
