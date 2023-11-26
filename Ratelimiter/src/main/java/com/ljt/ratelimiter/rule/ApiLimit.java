@@ -16,9 +16,9 @@ public class ApiLimit {
         this(api,limit,DEFAULT_TIME_UNIT);
     }
 
-    public ApiLimit(String api, int unit, int limit) {
+    public ApiLimit(String api, int limit, int unit) {
         this.api = api;
-        this.unit = unit;
         this.limit = limit;
+        this.unit = unit;
     }
 }

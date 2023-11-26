@@ -1,14 +1,15 @@
 configs:
+  # 每个appId代表一个调用方，每个limits代表一个接口的限制规则
   - appId: app-1
     limits:
       - api: /v1/user
         limit: 100
         unit: 60
-      - api: /v1/user
+      - api: /v1/order
         limit: 50
   - appId: app-2
     limits:
-      - api: /v2/user
+      - api: /v1/user
         limit: 50
-      - api: /v2/order
+      - api: /v1/order
         limit: 50

@@ -1,7 +1,8 @@
 package com.ljt.ratelimiter.exception;
 
 public class InternalErrorException extends Exception {
-    private static final long serialVersionUID = 400505098652932743L;
+
+    private static final long serialVersionUID = 1869568333836760801L;
 
     public InternalErrorException(String message) {
         super(message);
